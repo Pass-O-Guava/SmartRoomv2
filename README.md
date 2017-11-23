@@ -11,7 +11,8 @@ Struts+Rest+Mybatis+[Arduino]
     - Service: /owl/SensorDataService.java
     - Model: /pojo
     - DAO: /dao
-    - HttpClient: /util/HttpClient.java 
+    - HttpClient: /util/HttpClient.java
+    
  **/
  
  
@@ -26,6 +27,7 @@ Struts+Rest+Mybatis+[Arduino]
     - Model: /pojo
     - DAO: /dao
     - HttpClient: /util/HttpClient.java
+    
  **/
 
 # 3.Arduino UNO WiFi x2
@@ -37,4 +39,5 @@ Struts+Rest+Mybatis+[Arduino]
     - RestClientfor_Sensor_20171107
 * Arduino_2 for Device(LEDs & Motor)
     - RestServerfor_Device_20171113
+    
 **/
