@@ -21,7 +21,7 @@ Struts+Rest+Mybatis+[Arduino]
  /**
  * Struts2 "REST Server" for SmartRoomRestV2
     - Action：SensorDataRestController.java
-    - Request: GET http://localhost:7777/wangye/api/sensor/*
+    - Request: GET http://localhost:7777/xxx/api/sensor/*
     - Config:struts.xml
     - Service: /owl/SensorDataService.java
     - Model: /pojo
