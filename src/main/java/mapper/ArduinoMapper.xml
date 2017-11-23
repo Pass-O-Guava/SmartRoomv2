@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ArduinoMapper">
+  <resultMap id="BaseResultMap" type="pojo.Arduino">
+    <id column="IP" jdbcType="VARCHAR" property="ip" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="A0" jdbcType="VARCHAR" property="a0" />
+    <result column="A1" jdbcType="VARCHAR" property="a1" />
+    <result column="A2" jdbcType="VARCHAR" property="a2" />
+    <result column="A3" jdbcType="VARCHAR" property="a3" />
+    <result column="A4" jdbcType="VARCHAR" property="a4" />
+    <result column="A5" jdbcType="VARCHAR" property="a5" />
+    <result column="D2" jdbcType="VARCHAR" property="d2" />
+    <result column="D3" jdbcType="VARCHAR" property="d3" />
+    <result column="D4" jdbcType="VARCHAR" property="d4" />
+    <result column="D5" jdbcType="VARCHAR" property="d5" />
+    <result column="D6" jdbcType="VARCHAR" property="d6" />
+    <result column="D7" jdbcType="VARCHAR" property="d7" />
+    <result column="D8" jdbcType="VARCHAR" property="d8" />
+    <result column="D9" jdbcType="VARCHAR" property="d9" />
+    <result column="D10" jdbcType="VARCHAR" property="d10" />
+    <result column="D11" jdbcType="VARCHAR" property="d11" />
+    <result column="D12" jdbcType="VARCHAR" property="d12" />
+    <result column="D13" jdbcType="VARCHAR" property="d13" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    IP, version, A0, A1, A2, A3, A4, A5, D2, D3, D4, D5, D6, D7, D8, D9, D10, D11, D12, 
+    D13
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from arduino
+    where IP = #{ip,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <select id="selectByA2" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from arduino
+    where A2 = #{a2,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByVersion" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from arduino
+    where version = #{version,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from arduino
+    where IP = #{ip,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  <insert id="insert" parameterType="pojo.Arduino">
+    insert into arduino (IP, version, A0, 
+      A1, A2, A3, A4, 
+      A5, D2, D3, D4, 
+      D5, D6, D7, D8, 
+      D9, D10, D11, D12, 
+      D13)
+    values (#{ip,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{a0,jdbcType=VARCHAR}, 
+      #{a1,jdbcType=VARCHAR}, #{a2,jdbcType=VARCHAR}, #{a3,jdbcType=VARCHAR}, #{a4,jdbcType=VARCHAR}, 
+      #{a5,jdbcType=VARCHAR}, #{d2,jdbcType=VARCHAR}, #{d3,jdbcType=VARCHAR}, #{d4,jdbcType=VARCHAR}, 
+      #{d5,jdbcType=VARCHAR}, #{d6,jdbcType=VARCHAR}, #{d7,jdbcType=VARCHAR}, #{d8,jdbcType=VARCHAR}, 
+      #{d9,jdbcType=VARCHAR}, #{d10,jdbcType=VARCHAR}, #{d11,jdbcType=VARCHAR}, #{d12,jdbcType=VARCHAR}, 
+      #{d13,jdbcType=VARCHAR})
+  </insert>
+  
+  
+  <insert id="insertSelective" parameterType="pojo.Arduino">
+    insert into arduino
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ip != null">
+        IP,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="a0 != null">
+        A0,
+      </if>
+      <if test="a1 != null">
+        A1,
+      </if>
+      <if test="a2 != null">
+        A2,
+      </if>
+      <if test="a3 != null">
+        A3,
+      </if>
+      <if test="a4 != null">
+        A4,
+      </if>
+      <if test="a5 != null">
+        A5,
+      </if>
+      <if test="d2 != null">
+        D2,
+      </if>
+      <if test="d3 != null">
+        D3,
+      </if>
+      <if test="d4 != null">
+        D4,
+      </if>
+      <if test="d5 != null">
+        D5,
+      </if>
+      <if test="d6 != null">
+        D6,
+      </if>
+      <if test="d7 != null">
+        D7,
+      </if>
+      <if test="d8 != null">
+        D8,
+      </if>
+      <if test="d9 != null">
+        D9,
+      </if>
+      <if test="d10 != null">
+        D10,
+      </if>
+      <if test="d11 != null">
+        D11,
+      </if>
+      <if test="d12 != null">
+        D12,
+      </if>
+      <if test="d13 != null">
+        D13,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="a0 != null">
+        #{a0,jdbcType=VARCHAR},
+      </if>
+      <if test="a1 != null">
+        #{a1,jdbcType=VARCHAR},
+      </if>
+      <if test="a2 != null">
+        #{a2,jdbcType=VARCHAR},
+      </if>
+      <if test="a3 != null">
+        #{a3,jdbcType=VARCHAR},
+      </if>
+      <if test="a4 != null">
+        #{a4,jdbcType=VARCHAR},
+      </if>
+      <if test="a5 != null">
+        #{a5,jdbcType=VARCHAR},
+      </if>
+      <if test="d2 != null">
+        #{d2,jdbcType=VARCHAR},
+      </if>
+      <if test="d3 != null">
+        #{d3,jdbcType=VARCHAR},
+      </if>
+      <if test="d4 != null">
+        #{d4,jdbcType=VARCHAR},
+      </if>
+      <if test="d5 != null">
+        #{d5,jdbcType=VARCHAR},
+      </if>
+      <if test="d6 != null">
+        #{d6,jdbcType=VARCHAR},
+      </if>
+      <if test="d7 != null">
+        #{d7,jdbcType=VARCHAR},
+      </if>
+      <if test="d8 != null">
+        #{d8,jdbcType=VARCHAR},
+      </if>
+      <if test="d9 != null">
+        #{d9,jdbcType=VARCHAR},
+      </if>
+      <if test="d10 != null">
+        #{d10,jdbcType=VARCHAR},
+      </if>
+      <if test="d11 != null">
+        #{d11,jdbcType=VARCHAR},
+      </if>
+      <if test="d12 != null">
+        #{d12,jdbcType=VARCHAR},
+      </if>
+      <if test="d13 != null">
+        #{d13,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="pojo.Arduino">
+    update arduino
+    <set>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="a0 != null">
+        A0 = #{a0,jdbcType=VARCHAR},
+      </if>
+      <if test="a1 != null">
+        A1 = #{a1,jdbcType=VARCHAR},
+      </if>
+      <if test="a2 != null">
+        A2 = #{a2,jdbcType=VARCHAR},
+      </if>
+      <if test="a3 != null">
+        A3 = #{a3,jdbcType=VARCHAR},
+      </if>
+      <if test="a4 != null">
+        A4 = #{a4,jdbcType=VARCHAR},
+      </if>
+      <if test="a5 != null">
+        A5 = #{a5,jdbcType=VARCHAR},
+      </if>
+      <if test="d2 != null">
+        D2 = #{d2,jdbcType=VARCHAR},
+      </if>
+      <if test="d3 != null">
+        D3 = #{d3,jdbcType=VARCHAR},
+      </if>
+      <if test="d4 != null">
+        D4 = #{d4,jdbcType=VARCHAR},
+      </if>
+      <if test="d5 != null">
+        D5 = #{d5,jdbcType=VARCHAR},
+      </if>
+      <if test="d6 != null">
+        D6 = #{d6,jdbcType=VARCHAR},
+      </if>
+      <if test="d7 != null">
+        D7 = #{d7,jdbcType=VARCHAR},
+      </if>
+      <if test="d8 != null">
+        D8 = #{d8,jdbcType=VARCHAR},
+      </if>
+      <if test="d9 != null">
+        D9 = #{d9,jdbcType=VARCHAR},
+      </if>
+      <if test="d10 != null">
+        D10 = #{d10,jdbcType=VARCHAR},
+      </if>
+      <if test="d11 != null">
+        D11 = #{d11,jdbcType=VARCHAR},
+      </if>
+      <if test="d12 != null">
+        D12 = #{d12,jdbcType=VARCHAR},
+      </if>
+      <if test="d13 != null">
+        D13 = #{d13,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where IP = #{ip,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <update id="updateByPrimaryKey" parameterType="pojo.Arduino">
+    update arduino
+    set version = #{version,jdbcType=VARCHAR},
+      A0 = #{a0,jdbcType=VARCHAR},
+      A1 = #{a1,jdbcType=VARCHAR},
+      A2 = #{a2,jdbcType=VARCHAR},
+      A3 = #{a3,jdbcType=VARCHAR},
+      A4 = #{a4,jdbcType=VARCHAR},
+      A5 = #{a5,jdbcType=VARCHAR},
+      D2 = #{d2,jdbcType=VARCHAR},
+      D3 = #{d3,jdbcType=VARCHAR},
+      D4 = #{d4,jdbcType=VARCHAR},
+      D5 = #{d5,jdbcType=VARCHAR},
+      D6 = #{d6,jdbcType=VARCHAR},
+      D7 = #{d7,jdbcType=VARCHAR},
+      D8 = #{d8,jdbcType=VARCHAR},
+      D9 = #{d9,jdbcType=VARCHAR},
+      D10 = #{d10,jdbcType=VARCHAR},
+      D11 = #{d11,jdbcType=VARCHAR},
+      D12 = #{d12,jdbcType=VARCHAR},
+      D13 = #{d13,jdbcType=VARCHAR}
+    where IP = #{ip,jdbcType=VARCHAR}
+  </update>
+</mapper>

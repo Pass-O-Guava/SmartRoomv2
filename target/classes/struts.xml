@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+   "http://struts.apache.org/dtds/struts-2.0.dtd">
+      
+	<struts>    
+		<constant name="struts.ui.theme" value="simple" />
+		<constant name="struts.action.extension" value="xhtml,,xml,json,action" />
+		<constant name="struts.rest.content.restrictToGET" value="false" />
+		
+		<!-- Its not a mandatory to set 'Controller' at the end of REST actions -->
+		<constant name="struts.convention.action.suffix" value="Action, Controller" />
+    	<constant name="struts.convention.action.mapAllMatches" value="true" />
+    	<constant name="struts.convention.default.parent.package" value="rest-default" />
+    	
+    	<!-- package name of REST controllers (only last part of package) -->
+    	<constant name="struts.convention.package.locators" value="rest" />
+		<constant name="struts.mapper.class" value="org.apache.struts2.dispatcher.mapper.PrefixBasedActionMapper" />
+		
+		<!-- /api is the namespace of REST calls, second part "struts" for Non-REST calls -->
+		<constant name="struts.mapper.prefixMapping" value="/api:rest,:struts"/>
+   	
+   		<!-- set name space for REST, it should match with "struts.mapper.prefixMapping"-->
+    	<constant name="struts.rest.namespace" value="/api" />
+    	
+    	<!-- Default extension for REST calls -->
+    	<constant name="struts.rest.defaultExtension" value="json" />
+    	
+    	
+    	<!-- start2.jsp -->
+		<package name="SmartRoomV2" extends="struts-default">
+			<action name="sensor_detection_run" class="action.SensorDataAction" method="Sensor_Detection_Run">
+				<result>start2.jsp</result>
+			</action>
+			<action name="sensor_detection_stop" class="action.SensorDataAction" method="Sensor_Detection_Stop">
+				<result type="redirect">start2.jsp</result>
+				<result>start2.jsp</result>
+			</action>
+		</package>
+		
+		
+		<!-- GET http://localhost:7777/wangye/api/sensor/* -->
+		<package name="SmartRoomRestV2" namespace="/api" extends="rest-default">
+			<action name="sensor/*" class="action.SensorDataRestController">
+				<param name="id">{1}</param>
+			</action>
+		</package>
+
+
+		
+		<!-- GET http://localhost:7777/wangye/api/arduino/* -->
+		<!-- 
+		<package name="api" namespace="/api" extends="rest-default">
+			<action name="arduino/*" class="action.RestController">
+				<param name="ID">{1}</param> 
+			</action> 
+		</package>
+		 -->
+		
+		<!-- start.jsp -->
+		<!--  
+		<package name="start" extends="struts-default">
+			<action name="start" class="action.StartAction" method="Start">
+				<result>start.jsp</result>
+			</action>
+			<action name="stop" class="action.StartAction" method="Stop">
+				<result type="redirect">start.jsp</result>
+				<result>start.jsp</result>
+			</action>
+		</package>
+		-->
+			
+	</struts>

@@ -1,0 +1,20 @@
+@prefix fa: <http://www.semanticweb.org/SmartMeeting#>.@include <RDFS>.@include <OWL>.
+[rule1: (?a rdf:type fa:MeetingRoom)(?a fa:hasSensor ?c)(?c rdf:type fa:LightSensor)(?b rdf:type fa:LightIntensity)(?b fa:measuredBy ?c)(?b fa:hasValue ?e) le(?e,100 )(?a fa:hasState ?d)(?d rdf:type fa:LightState)->(?d fa:hasValue 'weakLight')]
+[rule2: (?a rdf:type fa:MeetingRoom)(?a fa:hasSensor ?c)(?c rdf:type fa:LightSensor)(?b rdf:type fa:LightIntensity)(?b fa:measuredBy ?c)(?b fa:hasValue ?e) ge(?e,300 )(?a fa:hasState ?d)(?d rdf:type fa:LightState)->(?d fa:hasValue 'hardLight')]
+[rule3: (?a rdf:type fa:MeetingRoom)(?a fa:hasSensor ?c)(?c rdf:type fa:LightSensor)(?b rdf:type fa:LightIntensity)(?b fa:measuredBy ?c)(?b fa:hasValue ?e) lessThan(?e,300 )greaterThan(?e,100 )(?a fa:hasState ?d)(?d rdf:type fa:LightState)->(?d fa:hasValue 'suitable')]
+[rule4: (?a rdf:type fa:MeetingRoom)(?a fa:hasState ?b)(?b rdf:type fa:LightState)(?b fa:hasValue 'weakLight')(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasValue 'off')->(?c fa:hasValue 'open')]
+[rule5: (?a rdf:type fa:MeetingRoom)(?a fa:hasState ?b)(?b rdf:type fa:LightState)(?b fa:hasValue 'weakLight')(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasValue 'on')->(?c fa:hasValue 'undo')]
+[rule6: (?a rdf:type fa:MeetingRoom)(?a fa:hasState ?b)(?b rdf:type fa:LightState)(?b fa:hasValue 'hardLight')(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasValue 'off')->(?c fa:hasValue 'undo')]
+[rule7: (?a rdf:type fa:MeetingRoom)(?a fa:hasState ?b)(?b rdf:type fa:LightState)(?b fa:hasValue 'hardLight')(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasValue 'on')->(?c fa:hasValue 'off')]
+[rule8: (?a rdf:type fa:MeetingRoom)(?a fa:hasState ?b)(?b rdf:type fa:LightState)(?b fa:hasValue 'suitable')(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)->(?c fa:hasValue 'undo')]
+[rule9: (?a rdf:type fa:MeetingRoom)(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?c fa:hasValue 'off')(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasService ?e)(?e fa:hasServiceType 'set')(?e fa:hasServiceEndPoint ?f)strConcat(?f,'/0',?g)->(?e fa:hasServiceURL ?g)]
+[rule9: (?a rdf:type fa:MeetingRoom)(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?c fa:hasValue 'open')(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasService ?e)(?e fa:hasServiceType 'set')(?e fa:hasServiceEndPoint ?f)strConcat(?f,'/1',?g)->(?e fa:hasServiceURL ?g)]
+[rule9: (?a rdf:type fa:MeetingRoom)(?a fa:hasEvent ?c)(?c rdf:type fa:LightEvent)(?c fa:hasValue 'undo')(?d fa:controlledBy ?c)(?d rdf:type fa:SmartLight)(?d fa:hasService ?e)(?e fa:hasServiceType 'set')(?e fa:hasServiceEndPoint ?f)strConcat(?f,'',?g)->(?e fa:hasServiceURL ?g)]
+[rule9: (?a rdf:type fa:MeetingRoom)(?a fa:hasSmartDevice ?d)(?d rdf:type fa:SmartLight)(?d fa:hasService ?e)(?e fa:hasServiceType 'get')(?e fa:hasServiceEndPoint ?f)strConcat(?f,'',?g)->(?e fa:hasServiceURL ?g)]
+[rule9: (?a rdf:type fa:MeetingRoom)(?a fa:hasSensor ?d)(?d rdf:type fa:LightSensor)(?d fa:hasService ?e)(?e fa:hasServiceType 'get')(?e fa:hasServiceEndPoint ?f)strConcat(?f,'',?g)->(?e fa:hasServiceURL ?g)]
+
+
+
+
+
+

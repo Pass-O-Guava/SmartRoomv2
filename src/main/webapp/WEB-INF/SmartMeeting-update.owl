@@ -1,0 +1,150 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns="http://www.semanticweb.org/SmartMeeting#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#" > 
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#SmartCutains">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#SmartDevice"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#hasValue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#Event">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#MeetingRoom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#ligth_event_in_room_1806">
+    <triggeredBy rdf:resource="http://www.semanticweb.org/SmartMeeting#light_state_room_1806"/>
+    <rdfs:comment>The light event in the 1806 meeting room </rdfs:comment>
+    <rdf:type rdf:resource="http://www.semanticweb.org/SmartMeeting#LightEvent"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#light_intensity_room_1806">
+    <hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</hasValue>
+    <rdfs:comment>The measured light intensity value in room 1806</rdfs:comment>
+    <measuredBy rdf:resource="http://www.semanticweb.org/SmartMeeting#light_sensor_room_1806"/>
+    <rdf:type rdf:resource="http://www.semanticweb.org/SmartMeeting#LightIntensity"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#smart_light_room_1806">
+    <hasValue>off</hasValue>
+    <rdfs:comment>The smart light deployed in 1806 meeting room</rdfs:comment>
+    <controlledBy rdf:resource="http://www.semanticweb.org/SmartMeeting#ligth_event_in_room_1806"/>
+    <rdf:type rdf:resource="http://www.semanticweb.org/SmartMeeting#SmartLight"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#Sensor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#triggeredBy">
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#Event"/>
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentState"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#measuredBy">
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#Sensor"/>
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentData"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#infrared">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentData"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#EnvironmentState">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#SmartLight">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#SmartDevice"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#hasState">
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#MeetingRoom"/>
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentState"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#EnvironmentData">
+    <rdfs:comment>The environment data measured by sensors</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#LightSensor">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#Sensor"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#meeting_room_1806">
+    <hasSmartDevice rdf:resource="http://www.semanticweb.org/SmartMeeting#smart_light_room_1806"/>
+    <hasEvent rdf:resource="http://www.semanticweb.org/SmartMeeting#ligth_event_in_room_1806"/>
+    <hasState rdf:resource="http://www.semanticweb.org/SmartMeeting#light_state_room_1806"/>
+    <hasSensor rdf:resource="http://www.semanticweb.org/SmartMeeting#light_sensor_room_1806"/>
+    <rdfs:comment>1806 meeting room in the Innovation Tower</rdfs:comment>
+    <rdf:type rdf:resource="http://www.semanticweb.org/SmartMeeting#MeetingRoom"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="A0">
+    <owl:annotatedSource rdf:resource="http://www.semanticweb.org/SmartMeeting#smart_light_room_1806"/>
+    <owl:annotatedProperty rdf:resource="http://www.semanticweb.org/SmartMeeting#hasValue"/>
+    <rdfs:comment>the init state of the light in room 1806 is off</rdfs:comment>
+    <owl:annotatedTarget>off</owl:annotatedTarget>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Axiom"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#light_sensor_room_1806">
+    <rdfs:comment>The light sensor deployed in 1806 meeting room</rdfs:comment>
+    <rdf:type rdf:resource="http://www.semanticweb.org/SmartMeeting#LightSensor"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#classifiedBy">
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentState"/>
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentData"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#light_state_room_1806">
+    <rdf:type rdf:resource="http://www.semanticweb.org/SmartMeeting#LightState"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#LightEvent">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#Event"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#hasSmartDevice">
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#SmartDevice"/>
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#MeetingRoom"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#hasEvent">
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#MeetingRoom"/>
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#Event"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#hasSensor">
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#Sensor"/>
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#MeetingRoom"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#LightState">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentState"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#LightIntensity">
+    <rdfs:comment>The light intensity of room</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#EnvironmentData"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#PIR">
+    <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/SmartMeeting#Sensor"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#SmartDevice">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.semanticweb.org/SmartMeeting#controlledBy">
+    <rdfs:domain rdf:resource="http://www.semanticweb.org/SmartMeeting#SmartDevice"/>
+    <rdfs:range rdf:resource="http://www.semanticweb.org/SmartMeeting#Event"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+</rdf:RDF>
