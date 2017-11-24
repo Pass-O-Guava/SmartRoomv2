@@ -1,7 +1,7 @@
 # SmartRoomv2
 Struts+Rest+Mybatis+[Arduino]
 
-# 1.由start2.jsp中action触发
+# 1.由start.jsp中action触发
 
 /**
  * Struts2 "Action" for SmartRoomV2
