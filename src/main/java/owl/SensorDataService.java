@@ -101,14 +101,15 @@ public class SensorDataService {
 	public static void updateSensorValue2owl(HashMap<RDFNode, String> sensorService_rdf,
 			ParameterizedSparqlString upDateCurrentServiceReturnValue,
 			ParameterizedSparqlString upDateCurrentSensorState){
-		//Date date = new Date();
-		//Timestamp timeStamp = new Timestamp(date.getTime());
+
 		// 遍历Service调用服务
 		Iterator<Entry<RDFNode, String>> it = sensorService_rdf.entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<RDFNode, String> entry = it.next();
 			RDFNode CurrentService = entry.getKey();
-			int pin_value = Integer.parseInt(entry.getValue());
+			//int pin_value = Integer.parseInt(entry.getValue());
+			String pin_value = entry.getValue();
+			
 			//System.out.println(" ------[002]: getkey + getvalue" + CurrentService + "\t" + pin_value); ///////
 			
 			// 更新owl:get服务返回值
@@ -123,6 +124,7 @@ public class SensorDataService {
 			UpdateRequest uss = upDateCurrentSensorState.asUpdate();
 			SearchDevice.UpdateModel(uss);
 		}
+		System.out.println(" [device state init.]");
 	}
 
 	
@@ -155,7 +157,7 @@ public class SensorDataService {
 		
 		RDFNode CurrentService; // SensorService RDF名称
 		String CurrentURL;		// SensorGetURL
-		int pin_value;			// SensorValue
+		String pin_value;			// SensorValue
 		
 		Iterator<Entry<RDFNode, String>> it = sensorService.entrySet().iterator();
 		while (it.hasNext()) {
@@ -164,7 +166,8 @@ public class SensorDataService {
 			CurrentURL = CurrentNode.getValue();
 			//String result = HttpClient.sendSensorGET("http://192.168.1.111/arduino/digital_sensor");
 			//System.out.println("  [CurrentURL]:" + CurrentURL);
-			pin_value = Integer.parseInt(HttpClient.sendSensorGET(CurrentURL));
+			//pin_value = Integer.parseInt(HttpClient.sendSensorGET(CurrentURL));
+			pin_value = HttpClient.sendSensorGET(CurrentURL);
 			
 			// 更新get服务返回值
 			upDateCurrentServiceReturnValue.setParam("Service", CurrentService);
@@ -178,7 +181,19 @@ public class SensorDataService {
 			UpdateRequest uss = upDateCurrentSensorState.asUpdate();
 			SearchDevice.UpdateModel(uss);
 			
-			System.out.println("  [查询传感器读数]：" + CurrentService + "\t" + pin_value);
+			//System.out.println("  [查询传感器读数]：" + CurrentService + "\t" + pin_value);
+		}
+		System.out.println("  [获得Sensor读数]：");
+	}
+	
+	/**
+	 * 控制所有device状态 <20171122>
+	 **/
+	public static void inferenceEnvi(String queryEnviromentState){
+		Iterator<QuerySolution> Envi = SearchDevice.runQuery(queryEnviromentState);
+		while (Envi.hasNext()){
+			QuerySolution q = Envi.next();
+			System.out.println("  [owl中sensor最新value]：" + q.get("y") + "\t" + q.get("z"));
 		}
 	}
 	
@@ -188,39 +203,21 @@ public class SensorDataService {
 	public static void setDeviceState(String queryCurrentSmartDevcieSetService)
 			throws ClientProtocolException, IOException {
 		
-		String CurrentURL;		// DeviceSetURL
-		//String device_state;
+		String CurrentURL;	// DeviceSetURL
+		String device_state;
 		//HashMap<RDFNode, String> getService = new HashMap<RDFNode, String>();
+		
 		ResultSet SmartDevcieSetService = SearchDevice.runQuery(queryCurrentSmartDevcieSetService);		
 		while (SmartDevcieSetService.hasNext()) {
 			QuerySolution qs = SmartDevcieSetService.nextSolution();
 			CurrentURL = qs.get("z").asLiteral().getLexicalForm();
-			System.out.println("  [设备操作]: " + CurrentURL);
-			
-			//device_state = Integer.parseInt(HttpClient.sendDeviceSET(CurrentURL));
+			device_state = HttpClient.sendSensorGET(CurrentURL);
+			System.out.println("  [推理DeviceURL]:" + CurrentURL + "\t" + device_state);
 			//getService.put(q.get("y"), device_state); //所有设备状态初始化0	
-		}
-		
-		Iterator<QuerySolution> e = SearchDevice.runQuery(queryCurrentSmartDevcieSetService);
-		while (e.hasNext()){
-			QuerySolution q = e.next();
-			System.out.println(q.get("y") + "\t" + q.get("z").asLiteral().getLexicalForm());
 		}
 		
 		// 更新device state owl
 		//updateSensorValue2owl(getService, upDateCurrentServiceReturnValue, upDateCurrentSmartDeviceState);
-	}
-	
-	/**
-	 * 控制所有device状态 <20171122>
-	 **/
-	public static void inferenceEnvi(String queryEnviromentState){
-		Iterator<QuerySolution> Envi = SearchDevice.runQuery(queryEnviromentState);
-		System.out.print("  [当前环境状态为]：");
-		while (Envi.hasNext()){
-			QuerySolution q = Envi.next();
-			//System.out.println(q.get("y") + "\t" + q.get("z"));
-		}
 	}
 
 }

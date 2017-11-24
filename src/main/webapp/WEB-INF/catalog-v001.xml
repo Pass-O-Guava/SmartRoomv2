@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1511423636959" name="duplicate:http://www.semanticweb.org/SmartMeeting" uri="SmartMeeting.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1511423636959" name="duplicate:http://www.semanticweb.org/SmartMeeting" uri="SmartMeetingService-AddAC-update.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1511423636959" name="duplicate:http://www.semanticweb.org/SmartMeeting" uri="SmartMeetingService-AddAC.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1511423636959" name="duplicate:http://www.semanticweb.org/SmartMeeting" uri="SmartMeetingService.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1511423636959" name="shadowed:http://www.semanticweb.org/SmartMeeting" uri="备份/SmartMeetingService-AddAC的副本.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1511506824415" name="duplicate:http://www.semanticweb.org/SmartMeeting" uri="SmartMeetingService-AddAC.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1511506824415" name="duplicate:http://www.semanticweb.org/SmartMeeting" uri="SmartMeetingService-AddAC2.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1511506824415" name="shadowed:http://www.semanticweb.org/SmartMeeting" uri="v1/SmartMeeting.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1511506824415" name="shadowed:http://www.semanticweb.org/SmartMeeting" uri="v1/SmartMeetingService.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1511506824415" name="shadowed:http://www.semanticweb.org/SmartMeeting" uri="备份/SmartMeetingService-AddAC的副本.owl"/>
     </group>
 </catalog>

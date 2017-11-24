@@ -3,7 +3,6 @@ package owl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
@@ -24,6 +23,11 @@ import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.sparql.serializer.SerializationContext;
 import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+
+import util.StringToInt;
 
 
 public class SearchDevice {
@@ -38,12 +42,11 @@ public class SearchDevice {
 	private static List<Rule> rules = new ArrayList<Rule>();
 	private static GenericRuleReasoner rea;
 	private static InfModel inf;
+	private static InfModel m;
 
 	// 本体文件路径
 	private static String root = null;
-	//private static String owlpath = "/WEB-INF/SmartMeetingService.owl";
-	//private static String rulepath = "/WEB-INF/SmartMeeting.rules";
-	private static String owlpath_update = "/WEB-INF/SmartMeetingService-AddAC-update.owl";
+	//private static String owlpath_update = "/WEB-INF/SmartMeetingService-AddAC-update.owl";
 	private static String owlpath = "/WEB-INF/SmartMeetingService-AddAC.owl";
 	private static String rulepath = "/WEB-INF/SmartMeeting-AddAC.rules";
 
@@ -60,12 +63,13 @@ public class SearchDevice {
 	}
 
 	/**
-	 * 加载本地文件形式的本体模型，失败系统退出
+	 * 加载本地文件形式的本体模型，失败系统退出 v1
 	 */
+	/*
 	public static boolean getModel() {
-
+		
 		// 创建模型，自带OWL full 推理机
-		model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
+		//model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
 
 		InputStreamReader in;
 		try {
@@ -89,22 +93,44 @@ public class SearchDevice {
 		}
 		return true;
 	}
-
+	*/
+	
 	/**
-	 * 修改某个实例的某个数据属性值后，更新模型并推理 
-	 * @param queryStr
+	 * 加载本地文件形式的本体模型，失败系统退出 v2
+	 * 20171124更新
+	 * @return
 	 */
-	public static boolean UpdateModel(UpdateRequest uq) {
-		// 更新模型
-		UpdateAction.execute(uq, model);
-		// 在更新后的模型基础上，创建推理模型
-		inf = ModelFactory.createInfModel(rea, model);
+	public static boolean getModel() {
+		
+		BuiltinRegistry.theRegistry.register(new StringToInt());
+		rules = Rule.rulesFromURL(root + rulepath);
+		rea = new GenericRuleReasoner(rules);
+		model = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM ); //创建模型
+		
+		InputStreamReader in;
+		try {
+			FileInputStream file = new FileInputStream(root + owlpath); // 读取本体文件
+			in = new InputStreamReader(file, "UTF-8"); // 处理中文
+			model.read(in, null);
+			in.close();
+			m = ModelFactory.createInfModel(rea, model);// 创建推理模型
+			Reasoner reasoner =  ReasonerRegistry.getOWLReasoner();
+			reasoner = reasoner.bindSchema(m);
+			inf = ModelFactory.createInfModel(reasoner, model);
+		} catch (FileNotFoundException e) {
+			System.out.println("无法打开本体文件，程序将终止");
+			System.exit(0);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
 		return true;
 	}
 
 	/**
 	 * 保存本体到本地
 	 */
+	/*
 	public static void writeModel() {
 		try {
 			FileOutputStream file = new FileOutputStream(root + owlpath_update);
@@ -119,20 +145,23 @@ public class SearchDevice {
 		}
 
 	}
+	*/
+	
 	/**
 	 * 提交sparql的查询，输出返回结果
-	 * 
 	 * @param Query q
 	 */
+	
 	public static ResultSet runQuery(Query q) {
 		qex = QueryExecutionFactory.create(q, inf);
 		results = qex.execSelect();
 		return results;
 		// qe.close();
 	}
+	
+	
 	/**
 	 * 提交sparql的查询，输出返回结果
-	 * 
 	 * @param String sq
 	 */
 	public static ResultSet runQuery(String sq) {
@@ -143,7 +172,39 @@ public class SearchDevice {
 		// qe.close();
 	}
 	
+	/**
+	 * 修改某个实例的某个数据属性值后，更新模型并推理 v1
+	 * @param queryStr
+	 */
+	/*
+	public static boolean UpdateModel(UpdateRequest uq) {
+		// 更新模型
+		UpdateAction.execute(uq, model);
+		
+		// 在更新后的模型基础上，创建推理模型
+		inf = ModelFactory.createInfModel(rea, model);
+		return true;
+	}
+	*/
 	
+	/**
+	 * 修改某个实例的某个数据属性值后，更新模型 v2
+	 * @param uq
+	 * @return
+	 */
+	public static boolean UpdateModel(UpdateRequest uq){
+		// 更新模型
+		//UpdateAction.parseExecute(queryStr, model);
+		UpdateAction.execute(uq, model);
+
+		// 在更新后的模型基础上，创建推理模型  (添加自身推理机)
+		m = ModelFactory.createInfModel(rea, model);
+		Reasoner reasoner =  ReasonerRegistry.getOWLReasoner();
+		reasoner = reasoner.bindSchema(m);
+		inf = ModelFactory.createInfModel(reasoner, model);
+		return true;
+	}
+
 	
 //	/**
 //	 * 将查询到的结果信息存入List中（不带URL前缀） 将查询结果从RDF层面的每一条陈述，转换为二维链表的形式

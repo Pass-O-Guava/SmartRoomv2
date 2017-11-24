@@ -5,14 +5,12 @@
  **/
 package action;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 import com.opensymphony.xwork2.ModelDriven;
 
 import pojo.Arduino;
-import dao.ArduinoDao;
 
 public class RestController implements ModelDriven<Object> {
 	

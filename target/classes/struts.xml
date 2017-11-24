@@ -29,7 +29,7 @@
     	
     	<!-- start2.jsp -->
 		<package name="SmartRoomV2" extends="struts-default">
-			<action name="sensor_detection_run" class="action.SensorDataAction" method="Sensor_Detection_Run">
+			<action name="sensor_detection_run" class="action.SensorDataAction" method="Sensor_Detection_Run2">
 				<result>start2.jsp</result>
 			</action>
 			<action name="sensor_detection_stop" class="action.SensorDataAction" method="Sensor_Detection_Stop">

@@ -30,6 +30,7 @@ import org.apache.jena.rdf.model.RDFNode;
 
 
 
+
 /*
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,17 +61,52 @@ public class SensorDataAction extends ActionSupport {
 	private static boolean Executed; //监测控制执行标志
 	private String message;
 	
+	// 查询 Sensor_Get_URL（全为get）
+	public static String queryCurrentSensorService = Constant.PREFIX + " SELECT ?y ?z " + "WHERE { SmartMeeting:meeting_room_1806"
+			+ " SmartMeeting:hasSensor ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceURL ?z.}";
+
+	// 更新 Sensor_returnValue
+	public static ParameterizedSparqlString upDateCurrentSensorState = new ParameterizedSparqlString(Constant.PREFIX
+			+ "delete { ?y SmartMeeting:hasValue ?z}" + "insert { ?y SmartMeeting:hasValue ?StateValue}"
+			+ "where  { ?x SmartMeeting:hasService ?Service.?y SmartMeeting:measuredBy ?x.?y SmartMeeting:hasValue ?z}");
+
+	// 查询 Device_Set_URL
+	public static String queryCurrentSmartDevcieSetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:meeting_room_1806"
+			+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"set\". ?y SmartMeeting:hasServiceURL ?z.}";
+			
+	// 更新 Service_Return_Value
+	public static ParameterizedSparqlString upDateCurrentServiceReturnValue = new ParameterizedSparqlString(
+			Constant.PREFIX + "delete { ?Service SmartMeeting:returnServiceValue ?x}"
+			+ "insert { ?Service SmartMeeting:returnServiceValue ?StateValue}"
+			+ "where  { ?Service SmartMeeting:returnServiceValue ?x}");
+	
+	// 查询 环境状态
+	public static String queryEnviromentState = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:" + "meeting_room_1806"
+			+ " SmartMeeting:hasSensor ?x. ?y SmartMeeting:measuredBy ?x. ?y SmartMeeting:hasValue ?z}";
+
+	/*
+	// 更新 Device_State_Value
+	public static ParameterizedSparqlString upDateCurrentSmartDeviceState = new ParameterizedSparqlString(Constant.PREFIX
+		+ "delete {?x SmartMeeting:hasValue ?y }" + "insert { ?x SmartMeeting:hasValue ?StateValue}"
+		+ "where  { ?x SmartMeeting:hasService ?Service.?x SmartMeeting:hasValue ?y}");
+	*/
+		
+	/*
+	// 查询 Device_Get_URL
+	public static String queryCurrentSmartDevcieGetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:"
+		+ "meeting_room_1806"
+		+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"get\". ?y SmartMeeting:hasServiceURL ?z.}";
+	*/
+	
+	
 	/** 
 	 * 【action="sensor_detection_run"时触发，监测控制服务开始】
-	 **/
-	
+	 **/	
 	public String Sensor_Detection_Run() throws Exception {
 		
 		Executed = true;
 		int Count = 0;
 		long Start = System.currentTimeMillis();
-		
-		//SearchDevice.getModel(); // 加载本体
 		
 		/** Detection Run! */
 		while (Executed) {
@@ -89,26 +125,6 @@ public class SensorDataAction extends ActionSupport {
 			// 光线、温度值推理，发送相应控制URL
 			light(light);
 			temperature(tempe);
-			
-			
-			/**
-			 * <知识体逻辑流程：>
-			 * 0.owl初始值：device_state 置 off
-			 * 1.owl查询：get_sensor_value_URL = "http://192.168.1.111/arduino/digital_sensor" //可一次查出light_sensor和temperature_sensor读数
-			 * 2.获取传感器读数：HttpRequst执行 get_sensor_value_URL
-			 * 3.owl更新：sensor_value
-			 * 4.owl推理查询：set_device_state_URL = URL_LED_OFF / URL_LED_ON / URL_AC_OFF / URL_AC_HOT / URL_AC_COLD
-			  				URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0"
-							URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1"
-							URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0"
-							URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1"
-							URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2"
-			 * 5.控制设备状态：HttpRequst执行 set_device_state_URL
-			 * 6.owl更新：device_state
-			 **/
-			
-			
-			// SearchDevice.writeModel(); // 更新本体到磁盘
 		}
 
 		// 获得执行时间
@@ -122,8 +138,22 @@ public class SensorDataAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	
-public String Sensor_Detection_Run2() throws Exception {
+	/**
+	 * <知识体逻辑流程：>
+	 * 0.owl初始值：device_state 置 off
+	 * 1.owl查询：get_sensor_value_URL = "http://192.168.1.111/arduino/digital_sensor" //可一次查出light_sensor和temperature_sensor读数
+	 * 2.获取传感器读数：HttpRequst执行 get_sensor_value_URL
+	 * 3.owl更新：sensor_value
+	 * 4.owl推理查询：set_device_state_URL = URL_LED_OFF / URL_LED_ON / URL_AC_OFF / URL_AC_HOT / URL_AC_COLD
+	  				URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0"
+					URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1"
+					URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0"
+					URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1"
+					URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2"
+	 * 5.控制设备状态：HttpRequst执行 set_device_state_URL
+	 * 6.owl更新：device_state
+	 **/	
+	public String Sensor_Detection_Run2() throws Exception {
 		
 		Executed = true;
 		int Count = 0;
@@ -131,112 +161,32 @@ public String Sensor_Detection_Run2() throws Exception {
 		
 		SearchDevice.getModel(); // 加载本体
 		
-		/**
-		 * 初始化SPARQL语句
-		 */
-		
-		/**
-		 *  0.owl初始值：device_state 置 0
-		 *  更新device初始状态
-		 **/
-		// 查询设备get服务
-		String queryCurrentSmartDevcieGetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:"
-				+ "meeting_room_1806"
-				+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"get\". ?y SmartMeeting:hasServiceURL ?z.}";
-		// 更新get服务返回值
-		ParameterizedSparqlString upDateCurrentServiceReturnValue = new ParameterizedSparqlString(
-				Constant.PREFIX + "delete { ?Service SmartMeeting:returnServiceValue ?x}"
-						+ "insert { ?Service SmartMeeting:returnServiceValue ?StateValue}"
-						+ "where  { ?Service SmartMeeting:returnServiceValue ?x}");
-		// 更新设备状态值
-		ParameterizedSparqlString upDateCurrentSmartDeviceState = new ParameterizedSparqlString(Constant.PREFIX
-				+ "delete {?x SmartMeeting:hasValue ?y }" + "insert { ?x SmartMeeting:hasValue ?StateValue}"
-				+ "where  { ?x SmartMeeting:hasService ?Service.?x SmartMeeting:hasValue ?y}");
-				
-		// 查询device get服务
-		ResultSet SmartDevcieGetService = SearchDevice.runQuery(queryCurrentSmartDevcieGetService);
-		HashMap<RDFNode, String> getService = new HashMap<RDFNode, String>();
-		while (SmartDevcieGetService.hasNext()) {
-			QuerySolution qs = SmartDevcieGetService.nextSolution();
-			getService.put(qs.get("y"), "0"); //所有设备状态初始化0
-			System.out.println("[1]:" + qs.get("y"));
-		}
-		// 更新所有device初始状态为0
-		SensorDataService.updateSensorValue2owl(getService, upDateCurrentServiceReturnValue, upDateCurrentSmartDeviceState);
-		
-		
-		/**
-		 *  获得所有sensor的url 存在 sensorService里
-		 **/
-		// 查询传感器服务（全为get）
-		String queryCurrentSensorService = Constant.PREFIX + " SELECT ?y ?z " + "WHERE { SmartMeeting:"
-				+ "meeting_room_1806"
-				+ " SmartMeeting:hasSensor ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceURL ?z.}";
-		// 查询sensor get服务 url		
+		// 查询 Sensor_Get_URL（全为get）		
 		ResultSet SensorService = SearchDevice.runQuery(queryCurrentSensorService);
 		HashMap<RDFNode, String> sensorService = new HashMap<RDFNode, String>();
 		while (SensorService.hasNext()) {
 			QuerySolution qs = SensorService.nextSolution();
 			sensorService.put(qs.get("y"), qs.get("z").asLiteral().getLexicalForm());
+			//System.out.println("[Sensor_get_url]:" + qs.get("z").asLiteral().getLexicalForm());
 		}
 		
-		
-		/**
-		 *  循环中会用到的owl查询语句
-		 **/
-		// 更新传感器读数
-		ParameterizedSparqlString upDateCurrentSensorState = new ParameterizedSparqlString(Constant.PREFIX
-				+ "delete { ?y SmartMeeting:hasValue ?z}" + "insert { ?y SmartMeeting:hasValue ?StateValue}"
-				+ "where  { ?x SmartMeeting:hasService ?Service.?y SmartMeeting:measuredBy ?x.?y SmartMeeting:hasValue ?z}");
-	/*	// 查询环境状态
-		String queryEnviromentState = Constant.PREFIX + "SELECT ?y " + "WHERE { SmartMeeting:" + "meeting_room_1806"
-				+ " SmartMeeting:hasState ?x. ?x SmartMeeting:hasValue ?y}";
-	*/	
-		// 查询环境状态
-		String queryEnviromentState2 = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:" + "meeting_room_1806"
-				+ " SmartMeeting:hasSensor ?x. ?y SmartMeeting:measuredBy ?x. ?y SmartMeeting:hasValue ?z}";
-
-		// 查询设备set服务
-		String queryCurrentSmartDevcieSetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:"
-				+ "meeting_room_1806"
-				+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"set\". ?y SmartMeeting:hasServiceURL ?z.}";
-				
-		
 		/** Detection Run! */
+		
 		while (Executed) {
 			Count ++;
 			System.out.println("\n第[" + Count + "]次监测：");
 			
-
-			/**
-			 * <知识体逻辑流程：>
-			 * 0.owl初始值：device_state 置 off
-			 * 1.owl查询：get_sensor_value_URL = "http://192.168.1.111/arduino/digital_sensor" //可一次查出light_sensor和temperature_sensor读数
-			 * 2.获取传感器读数：HttpRequst执行 get_sensor_value_URL
-			 * 3.owl更新：sensor_value
-			 * 4.owl推理查询：set_device_state_URL = URL_LED_OFF / URL_LED_ON / URL_AC_OFF / URL_AC_HOT / URL_AC_COLD
-			  				URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0"
-							URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1"
-							URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0"
-							URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1"
-							URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2"
-			 * 5.控制设备状态：HttpRequst执行 set_device_state_URL
-			 * 6.owl更新：device_state
-			 **/
-			
-			
-			// 获得所有sensor读数，并更新owl
+			// 获得所有sensor读数，更新owl并推理
 			SensorDataService.getSensorValue(sensorService, upDateCurrentServiceReturnValue, upDateCurrentSensorState);
 			
-			// 推理当前环境状态？?
-			//SensorDataService.inferenceEnvi(queryEnviromentState2);
+			// owl中sensor最新value
+			//SensorDataService.inferenceEnvi(queryEnviromentState);
 						
 			// 控制所有device状态，并更新owl
 			SensorDataService.setDeviceState(queryCurrentSmartDevcieSetService);
 			
-			
-			SearchDevice.writeModel(); // 更新本体到磁盘
-			System.out.println("更新本体！！");
+			//SearchDevice.writeModel(); // 更新本体到磁盘
+			//System.out.println("更新本体！！");
 		}
 
 		// 获得执行时间
@@ -245,8 +195,6 @@ public String Sensor_Detection_Run2() throws Exception {
 		System.out.println("----------------------------------------");
 		System.out.println("完成:\t监测[" + Count + "]次，\t总时长[" + Time + "]s");
 		
-		// 清空连接池
-		ClientUtil.clear();
 		return SUCCESS;
 	}
 	

@@ -47,6 +47,7 @@ public class ClientUtil {
 	            }
 	        return httpClient;
 	        }
+	  
 	  public static void clear(){
 		  httpClient=null;
 	  }

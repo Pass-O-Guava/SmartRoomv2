@@ -16,17 +16,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
 
-import owl.Constant;
-import owl.SearchDevice;
-import owl.SensorDataService;
 import pojo.SensorData;
 import util.HttpClient;
 
@@ -45,7 +40,7 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
 	private SensorData sensordata;
 	private static Map<String, SensorData> sensordatas = new HashMap<String,SensorData>();
 	
-	
+	/*
 	// SparqlString：更新get服务返回值？？
 	private static ParameterizedSparqlString upDateCurrentServiceReturnValue = new ParameterizedSparqlString(Constant.PREFIX 
 			+ "delete { ?Service SmartMeeting:returnServiceValue ?x}"
@@ -63,7 +58,8 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
 	private static String queryCurrentSmartDevcieSetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:"
 			+ "meeting_room_1806"
 			+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"set\". ?y SmartMeeting:hasServiceURL ?z.}";
-
+	*/
+	
 	private static String URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0";
 	private static String URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1";
 	private static String URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2";
