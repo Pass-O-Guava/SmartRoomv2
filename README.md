@@ -6,7 +6,7 @@ Struts+Rest+Jena+Mybatis+[Arduino]
 /**
  * Struts2 "Action" for SmartRoomV2
     - Action: SensorDataAction.java
-    - View: start.jsp
+    - View: http://localhost:7777/xxx/start.jsp
     - Config: struts.xml
     - Service: /owl/SensorDataService.java
     - Model: /pojo
