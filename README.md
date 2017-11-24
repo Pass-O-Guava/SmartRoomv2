@@ -41,3 +41,8 @@ Struts+Rest+Mybatis+[Arduino]
     - RestServerfor_Device_20171113
     
 **/
+
+# 4.Environment Configuration 
+- Arduino_1 for Sensor ip: 192.168.1.111
+- Arduino_2 for Device ip: 192.168.1.112
+- Rest Server ip: 192.168.1.110
