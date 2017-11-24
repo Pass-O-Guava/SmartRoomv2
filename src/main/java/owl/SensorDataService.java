@@ -26,21 +26,6 @@ import pojo.SensorData;
 import util.HttpClient;
 
 public class SensorDataService {
-
-	/*
-	// 初始化HTTP相关对象
-	private static List<Cookie> cookies = null;
-	private static CloseableHttpResponse response = null;
-
-	// 初始化部分变量
-	private static String pin_num = null;
-	private static String pin_type = null;
-	private static int pin_value = 0;
-	private static String CurrentURL = null;
-	private static RDFNode CurrentService = null;
-	//private static String CurrentService = null;
-	private static String CurrentStateValue = null;
-	 */
 	
 	/**
 	 * wy:查询light_sensor的服务（RDFNode）, sensorService_name to SensorService_RDFNode
@@ -53,7 +38,7 @@ public class SensorDataService {
 		while (it.hasNext()) {
 			Entry<String, String> entry = it.next();
 			String q_xxxSensorService = Constant.PREFIX + " SELECT ?x WHERE { SmartMeeting:" + entry.getKey() + " SmartMeeting:hasService ?x.}";
-			ResultSet xxxSensorService = SearchDevice.runQuery(q_xxxSensorService);
+			ResultSet xxxSensorService = JenaFAO.runQuery(q_xxxSensorService);
 			if (xxxSensorService.hasNext()){
 				QuerySolution qs = xxxSensorService.nextSolution(); //查询light_sensor、temperature_sensor在本体中对应服务的RDFNode
 				RDFNode rdf_xxxSensor = qs.get("x"); 
@@ -116,13 +101,13 @@ public class SensorDataService {
 			upDateCurrentServiceReturnValue.setParam("Service", CurrentService);
 			upDateCurrentServiceReturnValue.setLiteral("StateValue", pin_value);
 			UpdateRequest usrv = upDateCurrentServiceReturnValue.asUpdate();
-			SearchDevice.UpdateModel(usrv);
+			JenaFAO.UpdateModel(usrv);
 			
 			// 更新owl:传感器读数
 			upDateCurrentSensorState.setParam("Service", CurrentService);
 			upDateCurrentSensorState.setLiteral("StateValue", pin_value);
 			UpdateRequest uss = upDateCurrentSensorState.asUpdate();
-			SearchDevice.UpdateModel(uss);
+			JenaFAO.UpdateModel(uss);
 		}
 		System.out.println(" [device state init.]");
 	}
@@ -134,7 +119,7 @@ public class SensorDataService {
 	public static void findURLandControlDevice(String queryCurrentSmartDevcieSetService)
 			throws ClientProtocolException, IOException {
 		// owl中查询设备需要采取的控制url的ResultSet
-		ResultSet SmartDevcieSetService = SearchDevice.runQuery(queryCurrentSmartDevcieSetService);
+		ResultSet SmartDevcieSetService = JenaFAO.runQuery(queryCurrentSmartDevcieSetService);
 	
 		// 遍历ResultSet，发送Http控制请求
 		while (SmartDevcieSetService.hasNext()) {
@@ -144,6 +129,23 @@ public class SensorDataService {
 			HttpClient.sendGET(CurrentURL);
 			System.out.println("设备操作已完成！");
 		}
+	}
+	
+	
+	/**
+	 * 获得所有Sensor_Get_URL <20171124>
+	 **/
+	public static HashMap<RDFNode, String> SensorGetURL(String queryCurrentSensorService){
+		
+		// 查询 Sensor_Get_URL（全为get）		
+		ResultSet SensorService = JenaFAO.runQuery(queryCurrentSensorService);
+		HashMap<RDFNode, String> sensorService = new HashMap<RDFNode, String>();
+		while (SensorService.hasNext()) {
+			QuerySolution qs = SensorService.nextSolution();
+			sensorService.put(qs.get("y"), qs.get("z").asLiteral().getLexicalForm());
+			//System.out.println("[Sensor_get_url]:" + qs.get("z").asLiteral().getLexicalForm());
+		}
+		return sensorService;
 	}
 	
 	
@@ -173,13 +175,13 @@ public class SensorDataService {
 			upDateCurrentServiceReturnValue.setParam("Service", CurrentService);
 			upDateCurrentServiceReturnValue.setLiteral("StateValue", pin_value);
 			UpdateRequest usrv = upDateCurrentServiceReturnValue.asUpdate();
-			SearchDevice.UpdateModel(usrv);
+			JenaFAO.UpdateModel(usrv);
 			
 			// 更新传感器读数
 			upDateCurrentSensorState.setParam("Service", CurrentService);
 			upDateCurrentSensorState.setLiteral("StateValue", pin_value);
 			UpdateRequest uss = upDateCurrentSensorState.asUpdate();
-			SearchDevice.UpdateModel(uss);
+			JenaFAO.UpdateModel(uss);
 			
 			//System.out.println("  [查询传感器读数]：" + CurrentService + "\t" + pin_value);
 		}
@@ -190,7 +192,7 @@ public class SensorDataService {
 	 * 控制所有device状态 <20171122>
 	 **/
 	public static void inferenceEnvi(String queryEnviromentState){
-		Iterator<QuerySolution> Envi = SearchDevice.runQuery(queryEnviromentState);
+		Iterator<QuerySolution> Envi = JenaFAO.runQuery(queryEnviromentState);
 		while (Envi.hasNext()){
 			QuerySolution q = Envi.next();
 			System.out.println("  [owl中sensor最新value]：" + q.get("y") + "\t" + q.get("z"));
@@ -207,7 +209,7 @@ public class SensorDataService {
 		String device_state;
 		//HashMap<RDFNode, String> getService = new HashMap<RDFNode, String>();
 		
-		ResultSet SmartDevcieSetService = SearchDevice.runQuery(queryCurrentSmartDevcieSetService);		
+		ResultSet SmartDevcieSetService = JenaFAO.runQuery(queryCurrentSmartDevcieSetService);		
 		while (SmartDevcieSetService.hasNext()) {
 			QuerySolution qs = SmartDevcieSetService.nextSolution();
 			CurrentURL = qs.get("z").asLiteral().getLexicalForm();

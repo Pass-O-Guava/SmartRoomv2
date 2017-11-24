@@ -27,17 +27,27 @@
     	<constant name="struts.rest.defaultExtension" value="json" />
     	
     	
-    	<!-- start2.jsp -->
-		<package name="SmartRoomV2" extends="struts-default">
-			<action name="sensor_detection_run" class="action.SensorDataAction" method="Sensor_Detection_Run2">
-				<result>start2.jsp</result>
+    	<!-- start.jsp -->
+		<package name="SmartRoomV2(owl)" extends="struts-default">
+			<action name="sensor_detection_run" class="action.SensorDataAction" method="Sensor_Detection_Run">
+				<result>start.jsp</result>
 			</action>
 			<action name="sensor_detection_stop" class="action.SensorDataAction" method="Sensor_Detection_Stop">
+				<result type="redirect">start.jsp</result>
+				<result>start.jsp</result>
+			</action>
+		</package>
+		
+		<!-- start2.jsp -->
+		<package name="SmartRoomV2" extends="struts-default">
+			<action name="sensor_detection_run2" class="action.SensorDataAction2" method="Sensor_Detection_Run2">
+				<result>start2.jsp</result>
+			</action>
+			<action name="sensor_detection_stop2" class="action.SensorDataAction2" method="Sensor_Detection_Stop2">
 				<result type="redirect">start2.jsp</result>
 				<result>start2.jsp</result>
 			</action>
 		</package>
-		
 		
 		<!-- GET http://localhost:7777/wangye/api/sensor/* -->
 		<package name="SmartRoomRestV2" namespace="/api" extends="rest-default">

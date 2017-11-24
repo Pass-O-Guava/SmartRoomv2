@@ -4,21 +4,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>控制界面</title>
+<title>CMRI: Smart Room</title>
 </head>
-<body>
-<div align="center">
-    <h2>Smart Light Detection</h2>
+<body>	
+	<div align="center">
+    <h2>Smart Room V2</h2>
+    <h3>For Light/Temperature Detection and Control (OWL)<h3>
     <hr>
-	<s:form action="start" method="post">
-		<s:submit value="start" />
+	<s:form action="sensor_detection_run" method="post">
+		<s:submit value="sensor_detection_[Run!]" />
 	</s:form>
 
-	<s:form action="stop" method="post">
-		<s:submit value="stop" />
+	<s:form action="sensor_detection_stop" method="post">
+		<s:submit value="sensor_detection_[Stop]" />
 	</s:form>
 
 	<h2>${message}</h2>
 </div>
+	
 </body>
 </html>

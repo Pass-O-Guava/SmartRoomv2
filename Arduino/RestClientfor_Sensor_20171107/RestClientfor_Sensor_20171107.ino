@@ -16,7 +16,7 @@ http://www.arduino.org/learning/tutorials/boards-tutorials/restserver-and-restcl
 const char* connector = "rest";
 const char* server = "192.168.1.110"; /*const uint16_t port = 8080;*/
 const char* method = "GET";
-//const char* resource = "/wangye/api/sensor/5,5,5";
+//const char* resource = "/xxx/api/sensor/5,5,5";
 
 #define DHT11_SENSOR_PIN 7
 #define LIGHT_SENSOR_PIN 0
@@ -81,7 +81,7 @@ void loop() {
   */
   
   
-  char resourcewy[50] = "/wangye/api/sensor/";
+  char resourcewy[50] = "/xxx/api/sensor/";
   //res(resourcewy, light, humidity, temperature);
   //res2(resourcewy, light, temperature);
   strcat(resourcewy, light);

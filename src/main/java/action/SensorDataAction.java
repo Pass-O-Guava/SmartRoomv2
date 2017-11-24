@@ -2,7 +2,7 @@
  * 
  * Struts2 "Action" for SmartRoomV2
     - Action: SensorDataAction.java
-    - View: start2.jsp
+    - View: start.jsp
     - Config: struts.xml
     - Service: /owl/SensorDataService.java
     - Model: /pojo
@@ -12,48 +12,17 @@
  **/
 package action;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 
-
-
-
-
-
-
-
-
-
-
-/*
-import java.util.HashMap;
-import java.util.Iterator;
-
-import org.apache.http.client.CookieStore;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.RDFNode;
-
-import owl.Constant;
-
-import owl.Sender;
-*/
 import com.opensymphony.xwork2.ActionSupport;
 
-import util.ClientUtil;
 import util.HttpClient;
-import owl.Constant;
-import owl.SearchDevice;
+import owl.JenaFAO;
 import owl.SensorDataService;
+import owl.SparQL;
 
 public class SensorDataAction extends ActionSupport {
 	
@@ -61,132 +30,52 @@ public class SensorDataAction extends ActionSupport {
 	private static boolean Executed; //监测控制执行标志
 	private String message;
 	
-	// 查询 Sensor_Get_URL（全为get）
-	public static String queryCurrentSensorService = Constant.PREFIX + " SELECT ?y ?z " + "WHERE { SmartMeeting:meeting_room_1806"
-			+ " SmartMeeting:hasSensor ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceURL ?z.}";
-
-	// 更新 Sensor_returnValue
-	public static ParameterizedSparqlString upDateCurrentSensorState = new ParameterizedSparqlString(Constant.PREFIX
-			+ "delete { ?y SmartMeeting:hasValue ?z}" + "insert { ?y SmartMeeting:hasValue ?StateValue}"
-			+ "where  { ?x SmartMeeting:hasService ?Service.?y SmartMeeting:measuredBy ?x.?y SmartMeeting:hasValue ?z}");
-
-	// 查询 Device_Set_URL
-	public static String queryCurrentSmartDevcieSetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:meeting_room_1806"
-			+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"set\". ?y SmartMeeting:hasServiceURL ?z.}";
-			
-	// 更新 Service_Return_Value
-	public static ParameterizedSparqlString upDateCurrentServiceReturnValue = new ParameterizedSparqlString(
-			Constant.PREFIX + "delete { ?Service SmartMeeting:returnServiceValue ?x}"
-			+ "insert { ?Service SmartMeeting:returnServiceValue ?StateValue}"
-			+ "where  { ?Service SmartMeeting:returnServiceValue ?x}");
+	private static String URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0"; // For Sensor_Detection_Stop()
+	private static String URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0";  // For Sensor_Detection_Stop()
 	
-	// 查询 环境状态
-	public static String queryEnviromentState = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:" + "meeting_room_1806"
-			+ " SmartMeeting:hasSensor ?x. ?y SmartMeeting:measuredBy ?x. ?y SmartMeeting:hasValue ?z}";
-
-	/*
-	// 更新 Device_State_Value
-	public static ParameterizedSparqlString upDateCurrentSmartDeviceState = new ParameterizedSparqlString(Constant.PREFIX
-		+ "delete {?x SmartMeeting:hasValue ?y }" + "insert { ?x SmartMeeting:hasValue ?StateValue}"
-		+ "where  { ?x SmartMeeting:hasService ?Service.?x SmartMeeting:hasValue ?y}");
-	*/
-		
-	/*
-	// 查询 Device_Get_URL
-	public static String queryCurrentSmartDevcieGetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:"
-		+ "meeting_room_1806"
-		+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"get\". ?y SmartMeeting:hasServiceURL ?z.}";
-	*/
+	/**
+	 * <知识体逻辑流程：>
+	 * 0.加载owl和rules文件
+	 * (0.owl初始化：Device_State)
+	 * 1.owl查询：Sensor_Get_URL ResultSet
+	  				get_light_sensor_value_URL = "http://192.168.1.111/arduino/digital_sensor_light" 
+					get_temper_sensor_value_URL = "http://192.168.1.111/arduino/digital_sensor_temper"
+	 * 2.获取传感器读数：HttpRequst执行 Sensor_Get_URL
+	 * 3.owl更新并推理：ServiceReturnValue、Sensor_State
+	 * 4.owl查询：Device_Set_URL ResultSet
+	  				URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0"
+					URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1"
+					URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0"
+					URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1"
+					URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2"
+	 * 5.控制设备状态：HttpRequst执行 Device_Set_URL
+	 * (6.owl更新：Device_State)
+	 **/
 	
-	
-	/** 
-	 * 【action="sensor_detection_run"时触发，监测控制服务开始】
-	 **/	
 	public String Sensor_Detection_Run() throws Exception {
 		
 		Executed = true;
 		int Count = 0;
 		long Start = System.currentTimeMillis();
 		
-		/** Detection Run! */
-		while (Executed) {
-			Count ++;
-			System.out.println("\n第[" + Count + "]次监测：");
-			
-			// 发送 sensor http_request 请求光线、温度
-			String result = HttpClient.sendSensorGET("http://192.168.1.111/arduino/digital_sensor");
-			
-			// 返回 sensor http_response 获取光线、温度
-			String [] splitt;
-			splitt = result.split(",");
-			int light = Integer.parseInt(splitt[0]);
-			int tempe = Integer.parseInt(splitt[1]);
-			
-			// 光线、温度值推理，发送相应控制URL
-			light(light);
-			temperature(tempe);
-		}
-
-		// 获得执行时间
-		long Runtime = System.currentTimeMillis() - Start;
-		double Time = new BigDecimal((float) Runtime / 1000).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-		System.out.println("----------------------------------------");
-		System.out.println("完成:\t监测[" + Count + "]次，\t总时长[" + Time + "]s");
+		// 加载本体
+		JenaFAO.getModel();
 		
-		// 清空连接池
-		ClientUtil.clear();
-		return SUCCESS;
-	}
-	
-	/**
-	 * <知识体逻辑流程：>
-	 * 0.owl初始值：device_state 置 off
-	 * 1.owl查询：get_sensor_value_URL = "http://192.168.1.111/arduino/digital_sensor" //可一次查出light_sensor和temperature_sensor读数
-	 * 2.获取传感器读数：HttpRequst执行 get_sensor_value_URL
-	 * 3.owl更新：sensor_value
-	 * 4.owl推理查询：set_device_state_URL = URL_LED_OFF / URL_LED_ON / URL_AC_OFF / URL_AC_HOT / URL_AC_COLD
-	  				URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0"
-					URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1"
-					URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0"
-					URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1"
-					URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2"
-	 * 5.控制设备状态：HttpRequst执行 set_device_state_URL
-	 * 6.owl更新：device_state
-	 **/	
-	public String Sensor_Detection_Run2() throws Exception {
+		// owl查询Sensor_Get_URL		
+		HashMap<RDFNode, String> sensorService = SensorDataService.SensorGetURL(SparQL.queryCurrentSensorService);
 		
-		Executed = true;
-		int Count = 0;
-		long Start = System.currentTimeMillis();
-		
-		SearchDevice.getModel(); // 加载本体
-		
-		// 查询 Sensor_Get_URL（全为get）		
-		ResultSet SensorService = SearchDevice.runQuery(queryCurrentSensorService);
-		HashMap<RDFNode, String> sensorService = new HashMap<RDFNode, String>();
-		while (SensorService.hasNext()) {
-			QuerySolution qs = SensorService.nextSolution();
-			sensorService.put(qs.get("y"), qs.get("z").asLiteral().getLexicalForm());
-			//System.out.println("[Sensor_get_url]:" + qs.get("z").asLiteral().getLexicalForm());
-		}
-		
-		/** Detection Run! */
-		
+		// detection loop run!
 		while (Executed) {
 			Count ++;
 			System.out.println("\n第[" + Count + "]次监测：");
 			
 			// 获得所有sensor读数，更新owl并推理
-			SensorDataService.getSensorValue(sensorService, upDateCurrentServiceReturnValue, upDateCurrentSensorState);
-			
-			// owl中sensor最新value
-			//SensorDataService.inferenceEnvi(queryEnviromentState);
-						
-			// 控制所有device状态，并更新owl
-			SensorDataService.setDeviceState(queryCurrentSmartDevcieSetService);
+			SensorDataService.getSensorValue(sensorService, SparQL.upDateCurrentServiceReturnValue, SparQL.upDateCurrentSensorState);
+							
+			// owl查询Device_Set_URL，控制所有device状态
+			SensorDataService.setDeviceState(SparQL.queryCurrentSmartDevcieSetService);
 			
 			//SearchDevice.writeModel(); // 更新本体到磁盘
-			//System.out.println("更新本体！！");
 		}
 
 		// 获得执行时间
@@ -197,64 +86,6 @@ public class SensorDataAction extends ActionSupport {
 		
 		return SUCCESS;
 	}
-	
-	
-	
-	/** 
-	 * 【固定规则判断：光线】
-	 * 规则：“100”为判断阈值，小于“100”开灯，大于等于“100”关灯
-	 **/
-	
-	private static String URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0";
-	private static String URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1";
-	
-	public void light(int light) throws IOException{
-		try{
-			if(light < 100){
-				HttpClient.sendGET(URL_LED_ON);
-				System.out.println("  Light=[" + light + "]\t[开灯！]");
-			}
-			else{
-				HttpClient.sendGET(URL_LED_OFF);
-				System.out.println("  Light=[" + light + "]\t[关灯！]");
-			}
-		}
-		catch(Exception e){
-            System.out.println(e);
-        }
-	}
-	
-	
-	
-	/** 
-	 * 【固定规则判断：温度】 
-	 * 规则：“24”为判断阈值，小于“24”空调加热，等于“24”空调关闭，大于“24”空调制冷
-	 **/
-	
-	private static String URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0";
-	private static String URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1";
-	private static String URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2";
-	
-	public void temperature(int temperature) throws IOException{
-		try{
-			if(temperature < 24){
-				HttpClient.sendGET(URL_AC_HOT);
-				System.out.println("  Tempe=[" + temperature + "]\t<24，[空调加热！]");
-			}
-			else if(temperature > 24){
-				HttpClient.sendGET(URL_AC_COLD);
-				System.out.println("  Tempe=[" + temperature + "]\t>24，[空调制冷！]");
-				}
-			else{
-				HttpClient.sendGET(URL_AC_OFF);
-				System.out.println("  Tempe=[" + temperature + "]\t=24，[空调关闭！]");
-			}
-		}
-		catch(Exception e){
-            System.out.println(e);
-        }
-	}
-	
 	
 	
 	/** 

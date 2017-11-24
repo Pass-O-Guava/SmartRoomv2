@@ -30,7 +30,7 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import util.StringToInt;
 
 
-public class SearchDevice {
+public class JenaFAO {
 	protected static SerializationContext context = null;
 
 	private static Model model;// 本体模型
@@ -54,7 +54,7 @@ public class SearchDevice {
 		// 获取当前web项目目录
 		File file;
 		try {
-			file = new File(new File(SearchDevice.class.getResource("/").toURI()).getParentFile().getParentFile()
+			file = new File(new File(JenaFAO.class.getResource("/").toURI()).getParentFile().getParentFile()
 					.getAbsolutePath());
 			root = file.toString();
 		} catch (URISyntaxException e) {
@@ -143,7 +143,7 @@ public class SearchDevice {
 			e.printStackTrace();
 			System.exit(0);
 		}
-
+		//System.out.println("更新本体！！");
 	}
 	*/
 	

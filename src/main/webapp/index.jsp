@@ -4,12 +4,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>SMART ROOM V2</title>
+<title>CMRI: Smart Room</title>
 </head>
 <body>
 
 	<!-- <h3>Jenkins + Struts free style Test passed with Jenkins</h3>  -->
-	<h3>SMART-ROOM-V2 Welcome!</h3>
+	<h3>Smart Room V2 Welcome!</h3>
 
 </body>
 </html>

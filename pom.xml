@@ -93,6 +93,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>wangye</finalName> 
+		<finalName>xxx</finalName> 
 	</build>
 </project>

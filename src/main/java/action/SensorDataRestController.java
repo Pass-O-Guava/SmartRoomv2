@@ -2,14 +2,16 @@
  * 
  * Struts2 "REST Server" for SmartRoomRestV2
     - Action：SensorDataRestController.java
-    - Request: GET http://localhost:7777/wangye/api/sensor/*
+    - Request: GET http://localhost:7777/xxx/api/sensor/Light,Humidity,Temperature
     - Config:struts.xml
     - Service: /owl/SensorDataService.java
     - Model: /pojo
     - DAO: /dao
     - HttpClient: /util/HttpClient.java
+    - Arduino：RestClientfor_Sensor_20171107.ino
  * 
  **/
+
 package action;
 
 import java.io.IOException;
@@ -25,11 +27,10 @@ import com.opensymphony.xwork2.ModelDriven;
 import pojo.SensorData;
 import util.HttpClient;
 
-//@SuppressWarnings("serial")
 public class SensorDataRestController extends ActionSupport implements ModelDriven<Object>{
 	
 	private static final long serialVersionUID = 1L;
-	//wy+ 获取http://localhost:7777/wangye/api/sensor/Light,Humidity,Temperature中请求的参数
+	
 	// 封装 id 请求参数的属性
 	private String id;
 	private String [] split; // 对Light,Humidity,Temperature按逗号切分存储
@@ -37,34 +38,23 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
 	private String humidity;
 	private String temperature;
 	
-	private SensorData sensordata;
-	private static Map<String, SensorData> sensordatas = new HashMap<String,SensorData>();
-	
-	/*
-	// SparqlString：更新get服务返回值？？
-	private static ParameterizedSparqlString upDateCurrentServiceReturnValue = new ParameterizedSparqlString(Constant.PREFIX 
-			+ "delete { ?Service SmartMeeting:returnServiceValue ?x}"
-			+ "insert { ?Service SmartMeeting:returnServiceValue ?StateValue}"
-			+ "where  { ?Service SmartMeeting:returnServiceValue ?x}");
-	
-	// SparqlString：更新传感器读数
-	private static ParameterizedSparqlString upDateCurrentSensorState = new ParameterizedSparqlString(Constant.PREFIX
-			+ "delete { ?y SmartMeeting:hasValue ?z}" 
-			+ "insert { ?y SmartMeeting:hasValue ?StateValue}"
-			+ "where  { ?x SmartMeeting:hasService ?Service.?y SmartMeeting:measuredBy ?x.?y SmartMeeting:hasValue ?z}");
-	
-	
-	// SparqlString：查询设备set服务
-	private static String queryCurrentSmartDevcieSetService = Constant.PREFIX + "SELECT ?y ?z " + "WHERE { SmartMeeting:"
-			+ "meeting_room_1806"
-			+ " SmartMeeting:hasSmartDevice ?x. ?x SmartMeeting:hasService ?y. ?y SmartMeeting:hasServiceType \"set\". ?y SmartMeeting:hasServiceURL ?z.}";
-	*/
-	
 	private static String URL_AC_OFF  = "http://192.168.1.112/arduino/digital_ac/0";
 	private static String URL_AC_COLD = "http://192.168.1.112/arduino/digital_ac/1";
 	private static String URL_AC_HOT  = "http://192.168.1.112/arduino/digital_ac/2";
 	private static String URL_LED_OFF = "http://192.168.1.112/arduino/digital_led/0";
 	private static String URL_LED_ON  = "http://192.168.1.112/arduino/digital_led/1";
+	
+	private SensorData sensordata;
+	private static Map<String, SensorData> sensordatas = new HashMap<String,SensorData>();
+	
+	public Object getModel() {
+		if(sensordatas == null) {
+			return sensordata;	
+		} else {
+			return sensordatas;
+		}
+	}
+	
 	
 	// 获取 id 请求参数的方法
 	public String getId() {
@@ -77,6 +67,7 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
 		this.id = id;
 		split = id.split(",");
 	}
+	
 	
 	public String getLight(){
 		this.light =  split[0];
@@ -105,67 +96,20 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
 	// 处理带 id 参数的GET请求	http://localhost:7777/wangye/api/sensor/*,*,*  默认[1]为Light值，[2]为Humidity值，[3]Temperature值
 	public HttpHeaders show() throws Exception{
 		System.out.println("show()");
-		//System.out.println("Light= " + this.getLight() + "\tHumidity= " + this.getHumidity() + "\tTemperature= " + this.getTemperature());
 		
-		/*
-		int light = Integer.parseInt(this.getLight());
-		light(light);
-		int temperature = Integer.parseInt(this.getTemperature());
-		temperature(temperature);
-		*/
+		System.out.println("Light= " + this.getLight() + "\tHumidity= " + this.getHumidity() + "\tTemperature= " + this.getTemperature());
 		
-		
-		// 发送 sensor http_request 请求光线、温度
-		String result = HttpClient.sendSensorGET("http://192.168.1.111/arduino/digital_sensor");
-		
-		// 返回 sensor http_response 获取光线、温度
-		String [] splitt;
-		splitt = result.split(",");
-		int light = Integer.parseInt(splitt[0]);
-		int tempe = Integer.parseInt(splitt[1]);
-		
-		// 光线、温度值推理，发送相应控制URL
-		light(light);
-		temperature(tempe);
-		
+		// 业务逻辑
+		light(Integer.parseInt(this.getLight()));
+		temperature(Integer.parseInt(this.getTemperature()));
 	
-		// 1.更新owl并推理
-		// 2.查询控制url并发送
-		// 3.持久化
-		/*
-		SearchDevice.getModel();
-
-		//1
-		// 获得所有传感器当前读数, 写入get_SensorValue HashMap结构
-		HashMap<String, String> get_SensorValue = new HashMap<String, String>(); // 将sensor在本体中的name和实时获取的value存入HashMap结构
-		//get_SensorValue.put("temperature_sensor", this.getTemperature());
-		get_SensorValue.put("light_sensor_room_1806", this.getLight()); //light_sensor_service_room_1806
-		
-		// 构建<SensorService_RDFNode, URL> HashMap结构
-		HashMap<RDFNode, String> sensorService_rdf = new HashMap<RDFNode, String>();
-		sensorService_rdf = SensorDataService.sensorServiceName2RDFNode(get_SensorValue); // 查询light_sensor的服务（RDFNode）
-		
-		// 传感器最新读数更新owl并推理
-		SensorDataService.updateSensorValue2owl(sensorService_rdf, upDateCurrentServiceReturnValue, upDateCurrentSensorState);
-		
-		//2
-		// 操作所有设备
-		SensorDataService.findURLandControlDevice(queryCurrentSmartDevcieSetService);
-		
-		
-		//3
-		SensorDataService.writeSensorValue2database("light", "A", "-", Integer.parseInt(this.getLight()));
-		SensorDataService.writeSensorValue2database("humidity", "D", "-", Integer.parseInt(this.getHumidity()));
-		SensorDataService.writeSensorValue2database("temperature", "D", "-", Integer.parseInt(this.getTemperature()));
-		*/
 		addActionMessage("GET id !"); 
 		return new DefaultHttpHeaders("show");
 	}
 	
 	
-	
 	// 处理带 id 参数的 PUT 请求	/api/sensor/1
-	public String update() { 
+	public String update() {
 		System.out.println("update()");
 		//sensorDataDao.Update(sensordata); 
 		addActionMessage("PUT id ！"); 
@@ -187,17 +131,8 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
 		addActionMessage("DELETE id !"); 
 	    return "success"; 
 	    }  
-
 	
-	public Object getModel() {
-		if(sensordatas == null) {
-			return sensordata;	
-		} else {
-			return sensordatas;
-		}
-	}
-	
-	
+	// light业务处理
 	public void light(int light) throws IOException{
 		try{
 			if(light < 100){
@@ -214,6 +149,7 @@ public class SensorDataRestController extends ActionSupport implements ModelDriv
         }
 	}
 	
+	// temperature业务处理
 	public void temperature(int temperature) throws IOException{
 		try{
 			if(temperature < 24){
