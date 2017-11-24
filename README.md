@@ -6,7 +6,7 @@ Struts+Rest+Mybatis+[Arduino]
 /**
  * Struts2 "Action" for SmartRoomV2
     - Action: SensorDataAction.java
-    - View: start2.jsp
+    - View: start.jsp
     - Config: struts.xml
     - Service: /owl/SensorDataService.java
     - Model: /pojo
@@ -21,7 +21,7 @@ Struts+Rest+Mybatis+[Arduino]
  /**
  * Struts2 "REST Server" for SmartRoomRestV2
     - Action：SensorDataRestController.java
-    - Request: GET http://localhost:7777/xxx/api/sensor/*
+    - Request: GET http://localhost:7777/xxx/api/sensor/light,humidity,temperature
     - Config:struts.xml
     - Service: /owl/SensorDataService.java
     - Model: /pojo
