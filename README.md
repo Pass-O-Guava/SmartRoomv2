@@ -1,5 +1,5 @@
 # SmartRoomv2
-Struts+Rest+Mybatis+[Arduino]
+Struts+Rest+Jena+Mybatis+[Arduino]
 
 # 1.由start.jsp中action触发
 
