@@ -47,4 +47,4 @@ Struts+Rest+Jena+Mybatis+[Arduino]
 - Arduino_2 for Device ip: 192.168.1.112
 - Rest Server ip: 192.168.1.110
 
-![](https://github.com/Pass-O-Guava/SmartRoomv2/blob/master/pic/Arduino.jpg)
+![](https://github.com/Pass-O-Guava/SmartRoomv2/blob/master/projectPic/Arduino.jpg)
